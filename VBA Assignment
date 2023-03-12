@@ -1,0 +1,144 @@
+Sub Stock_VBA()
+Cells(1, 9).Value = "Ticker"
+Cells(1, 10).Value = "Yearly Change"
+Cells(1, 11).Value = "Percent Change"
+Cells(1, 12).Value = "Total Stock Volume"
+Cells(1, 16).Value = "Ticker"
+Cells(1, 17).Value = "Value"
+Cells(2, 15).Value = "Greatest % Increase"
+Cells(3, 15).Value = "Greatest % Decrease"
+Cells(4, 15).Value = "Greatest Total Volume"
+
+Columns("O:O").EntireColumn.AutoFit
+Columns("J:J").EntireColumn.AutoFit
+    Columns("K:K").EntireColumn.AutoFit
+    Columns("L:L").EntireColumn.AutoFit
+    
+Dim ticker As String
+Dim tickvol As Double
+tickvol = 0
+
+Dim ticksum As Integer
+ticksum = 2
+
+Dim op_price As Double
+op_price = Cells(2, 3).Value
+
+Dim closing_price As Double
+Dim yearchange As Double
+Dim percent As Double
+
+lastrow = Cells(Rows.Count, 1).End(xlUp).Row
+
+For i = 2 To lastrow
+If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+ticker = Cells(i, 1).Value
+
+tickvol = tickvol + Cells(i, 7).Value
+Range("I" & ticksum).Value = ticker
+Range("L" & ticksum).Value = tickvol
+closing_price = Cells(i, 6).Value
+yearchange = (closing_price - op_price)
+Range("J" & ticksum).Value = yearchange
+If (op_price = 0) Then
+percent = 0
+Else
+percent = yearchange / op_price
+End If
+Range("K" & ticksum).Value = percent
+Range("K" & ticksum).NumberFormat = "0.00%"
+ticksum = ticksum + 1
+tickvol = 0
+op_price = Cells(i + 1, 3)
+Else
+tickvol = tickvol + Cells(i, 7).Value
+End If
+Next i
+lastrow = Cells(Rows.Count, 9).End(xlUp).Row
+
+For i = 2 To lastrow
+If Cells(i, 10).Value > 0 Then
+Cells(i, 10).Interior.ColorIndex = 10
+Else
+Cells(i, 10).Interior.ColorIndex = 3
+End If
+Next i
+
+End Sub
+Sub greatest2()
+Dim tick2 As String
+Dim GreatVol As Double
+GreatVol = 0
+
+lastrowt = Cells(Rows.Count, 9).End(xlUp).Row
+For i = 2 To lastrowt
+If Cells(i + 1, 12).Value > GreatVol Then
+    GreatVol = Cells(i + 1, 12).Value
+Cells(4, 17).Value = GreatVol
+Cells(4, 16).Value = Cells(i, 9).Value
+Else
+GreatVol = GreatVol
+End If
+
+'percent increase 'pinc'
+lastrowt = Cells(Rows.Count, 11).End(xlUp).Row
+
+pinc = Cells(2, 11).Value
+If Cells(i, 11).Value > pinc Then
+pinc = Cells(i, 11).Value
+Cells(2, 16).Value = Cells(i, 9).Value
+Else
+pinc = pinc
+End If
+
+pdec = Cells(2, 11).Value
+If Cells(i, 11).Value < pdec Then
+pdec = Cells(i, 11).Value
+Cells(3, 16).Value = Cells(i, 9).Value
+Else
+pdec = pdec
+
+End If
+
+Next i
+End Sub
+Sub Macro1()
+'
+' Macro1 Macro
+'
+
+'
+    Range("Q2").Select
+    ActiveCell.FormulaR1C1 = "=MAX(C[-6])"
+    Range("Q2").Select
+    ActiveCell.FormulaR1C1 = "=MAX(C[-6])"
+    Range("P2").Select
+End Sub
+Sub Macro2()
+'
+' Macro2 Macro
+'
+
+'
+    Range("Q3").Select
+    ActiveCell.FormulaR1C1 = "=MIN(C[-6])"
+    Range("Q3").Select
+    Selection.Style = "Percent"
+    Selection.NumberFormat = "0.0%"
+    Selection.NumberFormat = "0.00%"
+End Sub
+
+Sub macrorecord()
+'
+' macrorecord Macro
+'
+
+'
+    Range("Q2").Select
+    ActiveCell.FormulaR1C1 = "=DMAX(C[-6],""Percent Change"",C[-6])"
+    Range("Q2").Select
+    Selection.Style = "Percent"
+    Selection.NumberFormat = "0.0%"
+    Selection.NumberFormat = "0.00%"
+End Sub
+    
